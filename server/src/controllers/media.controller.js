@@ -26,7 +26,7 @@ const getGenres = async (req, res) => {
     }
 };
 
-const search = async (res, res) => {
+const search = async (req, res) => {
     try {
         const { mediaType } = req.params;
         const { query, page } = req.query;
