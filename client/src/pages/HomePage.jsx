@@ -1,8 +1,12 @@
 import React from 'react'
+import HeroSlide from '../components/common/HeroSlide';
+import tmbdConfigs from '../api/configs/tmdb.configs';
 
 const HomePage = () => {
     return (
-        <div></div>
+        <>
+            <HeroSlide mediaType={tmbdConfigs.mediaType.movie} mediaCategory={tmbdConfigs.mediaCategory.popular} />
+        </>
     )
 }
 

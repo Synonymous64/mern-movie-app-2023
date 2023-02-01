@@ -1,7 +1,7 @@
-import privateClient from '../client/private.client';
-import publicClient from '../client/public.client';
+import privateClient from "../client/private.client";
+import publicClient from "../client/public.client";
 
-const userEnpoints = {
+const userEndpoints = {
     signin: "user/signin",
     signup: "user/signup",
     getInfo: "user/info",
@@ -11,45 +11,42 @@ const userEnpoints = {
 const userApi = {
     signin: async ({ username, password }) => {
         try {
+            console.log("send request");
             const response = await publicClient.post(
-                userEnpoints.signin,
+                userEndpoints.signin,
                 { username, password }
             );
-            return { response }
-        } catch (err) {
-            return { err };
-        }
+
+            return { response };
+        } catch (err) { console.log("err"); return { err }; }
     },
     signup: async ({ username, password, confirmPassword, displayName }) => {
         try {
             const response = await publicClient.post(
-                userEnpoints.signup,
+                userEndpoints.signup,
                 { username, password, confirmPassword, displayName }
             );
-            return { response }
-        } catch (err) {
-            return { err };
-        }
+
+            return { response };
+        } catch (err) { return { err }; }
     },
     getInfo: async () => {
         try {
-            const response = await privateClient.get(userEnpoints.getInfo);
+            const response = await privateClient.get(userEndpoints.getInfo);
+
             return { response };
-        } catch (err) {
-            return { err };
-        }
+        } catch (err) { return { err }; }
     },
     passwordUpdate: async ({ password, newPassword, confirmNewPassword }) => {
         try {
-            const response = privateClient.put(
-                userEnpoints.passwordUpdate,
+            const response = await privateClient.put(
+                userEndpoints.passwordUpdate,
                 { password, newPassword, confirmNewPassword }
             );
+
             return { response };
-        } catch (err) {
-            return { err };
-        }
-    },
-}
+        } catch (err) { return { err }; }
+    }
+};
 
 export default userApi;
