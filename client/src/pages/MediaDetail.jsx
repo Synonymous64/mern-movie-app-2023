@@ -18,6 +18,7 @@ import { setGlobalLoading } from '../redux/features/globalLoadingSlice';
 import { setAuthModalOpen } from '../redux/features/authModalSlice';
 import { addFavorite, removeFavorite } from '../redux/features/userSlice';
 import CastSlide from './CastSlide';
+import MediaVideoSlide from './MediaVideoSlide';
 
 
 const MediaDetail = () => {
@@ -48,7 +49,54 @@ const MediaDetail = () => {
 
         getMedia();
     }, [mediaType, mediaId, dispatch])
+    const onFavoriteClick = async () => {
+        if (!user) return dispatch(setAuthModalOpen(true));
 
+        if (onRequest) return;
+
+        if (isFavorite) {
+            onRemoveFavorite();
+            return;
+        }
+
+        setOnRequest(true);
+        const body = {
+            mediaId: media.id,
+            mediaTitle: media.title || media.name,
+            mediaType: mediaType,
+            mediaPoster: media.poster_path,
+            mediaRate: media.vote_average,
+        }
+
+        const { response, err } = await favoriteApi.add(body);
+        setOnRequest(false);
+        if (err) toast.error(err.message);
+        if (response) {
+            dispatch(addFavorite(response));
+            setIsFavorite(true);
+            toast.success("Added Favorite Successfully");
+        };
+    };
+
+    const onRemoveFavorite = async () => {
+        if (onRequest) return;
+        setOnRequest(true);
+
+        const favorite = listFavorites.find(e => e.mediaId.toString() === mediaId.toString());
+
+        const { response, err } = await favoriteApi.remove({ favoriteId: favorite.id })
+        setOnRequest(false);
+
+        if (err) toast.error(err.message);
+
+        if (response) {
+            dispatch(removeFavorite(favorite));
+            setIsFavorite(false);
+            toast.success("Removed Favorite Successfully");
+        }
+
+
+    }
     return (
         media ? (
             <>
@@ -137,7 +185,7 @@ const MediaDetail = () => {
                                             startIcon={isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
                                             loadingPosition="start"
                                             loading={onRequest}
-                                        // onClick={}
+                                            onClick={onFavoriteClick}
                                         />
                                         <Button
                                             variant="contained"
@@ -164,6 +212,14 @@ const MediaDetail = () => {
                         </Box>
                     </Box>
                     {/* media content */}
+
+                    {/* media videos */}
+                    <div ref={videoRef} style={{ paddingTop: "2rem" }}>
+                        <Container header="Videos">
+                            <MediaVideoSlide videos={media.videos} />
+                        </Container>
+                    </div>
+                    {/* media videos */}
                 </Box>
             </>
         ) : null
