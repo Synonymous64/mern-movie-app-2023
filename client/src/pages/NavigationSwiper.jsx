@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Navigation, Pagination } from 'swiper';
+import { Navigation, Pagination } from "swiper";
 import { Swiper } from "swiper/react";
 
 const NavigationSwiper = ({ children }) => {
@@ -8,13 +8,13 @@ const NavigationSwiper = ({ children }) => {
             "& .swiper-slide": {
                 width: "100%",
                 opacity: "0.6",
-                paddingBottom: "3rem",
+                paddingBottom: "3rem"
             },
             "& .swiper-slide-active": { opacity: 1 },
             "& .swiper-pagination-bullet": {
                 backgroundColor: "text.primary"
             },
-            " & .swiper-button-next, & .swiper-button-prev": {
+            "& .swiper-button-next, & .swiper-button-prev": {
                 color: "text.primary",
                 "&::after": {
                     fontSize: { xs: "1rem", md: "2rem" }
@@ -35,7 +35,7 @@ const NavigationSwiper = ({ children }) => {
                 {children}
             </Swiper>
         </Box>
-    )
-}
+    );
+};
 
 export default NavigationSwiper;

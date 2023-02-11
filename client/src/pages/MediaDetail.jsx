@@ -19,6 +19,10 @@ import { setAuthModalOpen } from '../redux/features/authModalSlice';
 import { addFavorite, removeFavorite } from '../redux/features/userSlice';
 import CastSlide from './CastSlide';
 import MediaVideoSlide from './MediaVideoSlide';
+import BackdropSlide from './BackdropSlide';
+import PosterSlide from './PosterSlide';
+import RecommendationSlide from './RecommendationSlide';
+import MediaSlide from '../components/common/MediaSlide';
 
 
 const MediaDetail = () => {
@@ -32,6 +36,7 @@ const MediaDetail = () => {
 
     const dispatch = useDispatch();
     const videoRef = useRef(null);
+
     useEffect(() => {
         const getMedia = async () => {
             dispatch(setGlobalLoading(true));
@@ -94,7 +99,6 @@ const MediaDetail = () => {
             setIsFavorite(false);
             toast.success("Removed Favorite Successfully");
         }
-
 
     }
     return (
@@ -216,10 +220,43 @@ const MediaDetail = () => {
                     {/* media videos */}
                     <div ref={videoRef} style={{ paddingTop: "2rem" }}>
                         <Container header="Videos">
-                            <MediaVideoSlide videos={media.videos} />
+                            <MediaVideoSlide videos={media.videos.results.splice(0, 5)} />
                         </Container>
                     </div>
                     {/* media videos */}
+
+                    {/* media backdrop */}
+                    {media.images.backdrops.length > 0 && (
+                        <Container header="backdrops">
+                            <BackdropSlide backdrops={media.images.backdrops} />
+                        </Container>
+                    )}
+                    {/* media backdrop */}
+
+                    {/* media Poster */}
+                    {media.images.posters.length > 0 && (
+                        <Container header="poster">
+                            <PosterSlide posters={media.images.posters} />
+                        </Container>
+                    )}
+                    {/* media Poster */}
+
+                    {/* media reviews */}
+                    {/* media reviews */}
+
+                    {/* media recommendations */}
+                    <Container header="you may also like">
+                        {media.recommend.length > 0 && (
+                            <RecommendationSlide medias={media.recommend} mediaType={mediaType}/>
+                        )}
+                        {media.recommend.length === 0 && (
+                            <MediaSlide
+                                mediaType={mediaType}
+                                mediaCategory={tmdbConfigs.mediaCategory.top_rated}
+                            />
+                        )}
+                    </Container>
+                    {/* media recommendations */}
                 </Box>
             </>
         ) : null

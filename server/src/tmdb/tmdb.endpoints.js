@@ -2,7 +2,7 @@ import tmdbConfig from "./tmdb.config.js";
 
 const tmdbEndpoints = {
     mediaList: ({ mediaType, mediaCategory, page }) => tmdbConfig.getUrl(
-        `${mediaType}/${mediaCategory}`, page
+        `${mediaType}/${mediaCategory}`, { page }
     ),
     mediaDetail: ({ mediaType, mediaId }) => tmdbConfig.getUrl(
         `${mediaType}/${mediaId}`
@@ -23,13 +23,14 @@ const tmdbEndpoints = {
         `${mediaType}/${mediaId}/images`
     ),
     mediaSearch: ({ mediaType, query, page }) => tmdbConfig.getUrl(
-        `${mediaType}`, { query, page }
+        `search/${mediaType}`, { query, page }
     ),
-    personalDetail: ({ personId }) => tmdbConfig.getUrl(
+    personDetail: ({ personId }) => tmdbConfig.getUrl(
         `person/${personId}`
     ),
-    personalMedias: ({ personId }) => tmdbConfig.getUrl(
+    personMedias: ({ personId }) => tmdbConfig.getUrl(
         `person/${personId}/combined_credits`
     ),
 };
+
 export default tmdbEndpoints;
