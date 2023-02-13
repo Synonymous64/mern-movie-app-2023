@@ -23,6 +23,7 @@ import BackdropSlide from './BackdropSlide';
 import PosterSlide from './PosterSlide';
 import RecommendationSlide from './RecommendationSlide';
 import MediaSlide from '../components/common/MediaSlide';
+import MediaReviews from './MediaReviews';
 
 
 const MediaDetail = () => {
@@ -220,7 +221,7 @@ const MediaDetail = () => {
                     {/* media videos */}
                     <div ref={videoRef} style={{ paddingTop: "2rem" }}>
                         <Container header="Videos">
-                            <MediaVideoSlide videos={media.videos.results.splice(0, 5)} />
+                            <MediaVideoSlide videos={[...media.videos.results].splice(0, 5)} />
                         </Container>
                     </div>
                     {/* media videos */}
@@ -242,12 +243,13 @@ const MediaDetail = () => {
                     {/* media Poster */}
 
                     {/* media reviews */}
+                    <MediaReviews reviews={media.reviews} media={media} mediaType={mediaType} />
                     {/* media reviews */}
 
                     {/* media recommendations */}
                     <Container header="you may also like">
                         {media.recommend.length > 0 && (
-                            <RecommendationSlide medias={media.recommend} mediaType={mediaType}/>
+                            <RecommendationSlide medias={media.recommend} mediaType={mediaType} />
                         )}
                         {media.recommend.length === 0 && (
                             <MediaSlide

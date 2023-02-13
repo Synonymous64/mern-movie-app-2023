@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import Container from '../components/common/Container';
 import reviewApi from '../api/modules/review.api';
+import TextAvatar from './TextAvatar';
 
 
 const ReviewItem = ({ review, onRemoved }) => {
@@ -36,6 +37,7 @@ const ReviewItem = ({ review, onRemoved }) => {
         >
             <Stack direction="row" spacing={2}>
                 {/* avatar */}
+                <TextAvatar text={review.user.displayName} />
                 {/* avatar */}
                 <Stack spacing={2} flexGrow={1}>
                     <Stack spacing={1}>
@@ -56,9 +58,14 @@ const ReviewItem = ({ review, onRemoved }) => {
                             loadingPosition="start"
                             loading={onRequest}
                             onClick={onRemove}
-                            sx={{}}
+                            sx={{
+                                position: { xs: "relative", md: "absolute" },
+                                right: { xs: 0, md: "10px" },
+                                marginTop: { xs: 2, md: 0 },
+                                width: "max-content",
+                            }}
                         >
-
+                            remove
                         </LoadingButton>
                     )}
                 </Stack>
@@ -67,9 +74,115 @@ const ReviewItem = ({ review, onRemoved }) => {
         </Box>
     )
 }
-const MediaReviews = () => {
+const MediaReviews = ({ reviews, media, mediaType }) => {
+    const { user } = useSelector((state) => state.user)
+    const [listReviews, setListReviews] = useState([]);
+    const [filteredReviews, setFilteredReviews] = useState([]);
+    const [page, setPage] = useState(1);
+    const [onRequest, setOnRequest] = useState(false);
+    const [content, setContent] = useState("");
+    const [reviewCount, setReviewCount] = useState(0);
+
+    const skip = 4;
+
+    useEffect(() => {
+        setListReviews([...reviews]);
+        setFilteredReviews([...reviews].splice(0, skip));
+        setReviewCount(reviews.length)
+    }, [reviews])
+
+    const onAddReview = async () => {
+        if (onRequest) return;
+        setOnRequest(true);
+
+        const body = {
+            content,
+            mediaId: media.id,
+            mediaType,
+            mediaTitle: media.title || media.name,
+            mediaPoster: media.poster_path,
+        }
+
+        const { response, err } = await reviewApi.add(body);
+
+        setOnRequest(false);
+        if (err) toast.error(err.message);
+        if (response) {
+            toast.success("Post Review Success");
+
+            setFilteredReviews([...filteredReviews, response]);
+            setReviewCount(reviewCount + 1);
+            setContent("");
+        };
+    };
+    const onLoadMore = () => {
+        setFilteredReviews([...filteredReviews, ...[...listReviews].splice(page * skip, skip)])
+        setPage(page + 1);
+    };
+
+    const onRemoved = (id) => {
+        if (listReviews.findIndex(e => e.id === id) !== -1) {
+            const newListReviews = [...listReviews].filter(e => e.id !== id);
+            setListReviews(newListReviews);
+            setFilteredReviews([...newListReviews].splice(0, page * skip));
+        } else {
+            setFilteredReviews([...filteredReviews].filter(e => e.id !== id));
+        }
+
+        setReviewCount(reviewCount - 1);
+
+        toast.success("Review Removed Successfully");
+    }
     return (
-        <div>MediaReviews</div>
+        <>
+            <Container header={`Reviews (${reviewCount})`}>
+                <Stack spacing={4} marginBottom={2}>
+                    {filteredReviews.map((item) => (
+                        <Box key={item.id}>
+                            <ReviewItem review={item} onRemoved={onRemoved} />
+                            <Divider sx={{
+                                display: { xs: "block", md: "none" }
+                            }} />
+                        </Box>
+                    ))}
+                    {filteredReviews.length < listReviews.length && (
+                        <Button onClick={onLoadMore}>load more</Button>
+                    )}
+                </Stack>
+                {user && (
+                    <>
+                        <Divider />
+                        <Stack direction="row" spacing={2}>
+                            <TextAvatar text={user.displayName} />
+                            <Stack spacing={2} flexGrow={1}>
+                                <Typography variant='h6' fontWeight="700">
+                                    {user.displayName}
+                                </Typography>
+                                <TextField
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    multiline
+                                    rows={4}
+                                    placeholder="Write your review"
+                                    variant='outlined'
+                                />
+                                <LoadingButton
+                                    variant='contained'
+                                    size='large'
+                                    sx={{ width: "max-content" }}
+                                    startIcon={<SendOutlinedIcon />}
+                                    loadingPosition="start"
+                                    loading={onRequest}
+                                    onClick={onAddReview}
+                                >
+
+                                </LoadingButton>
+                            </Stack>
+                        </Stack>
+                    </>
+                )}
+            </Container>
+        </>
     )
 }
 
