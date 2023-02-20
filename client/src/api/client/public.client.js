@@ -2,7 +2,7 @@ import axios from 'axios';
 import queryString from 'query-string';
 
 
-const baseURL = "http://netflix-clone-one-gold.vercel.app/api/v1"
+const baseURL = "https://netflix-clone-one-gold.vercel.app/api/v1"
 
 
 const publicClient = axios.create({
