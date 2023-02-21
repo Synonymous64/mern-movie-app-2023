@@ -1,14 +1,14 @@
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { Box, Button, Stack, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import tmdbConfigs from '../../api/configs/tmdb.configs';
-import uiConfigs from '../../configs/ui.configs';
-import { routesGen } from '../../routes/routes';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import CirculateRate from './CirculateRate';
-import { useSelector } from 'react-redux';
-import favoriteUtils from '../../utils/favorite.util';
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import tmdbConfigs from "../../api/configs/tmdb.configs";
+import uiConfigs from "../../configs/ui.configs";
+import { routesGen } from "../../routes/routes";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import CircularRate from "./CirculateRate";
+import { useSelector } from "react-redux";
+import favoriteUtils from '../../utils/favorite.util'
 
 const MediaItem = ({ media, mediaType }) => {
     const { listFavorites } = useSelector((state) => state.user);
@@ -20,29 +20,28 @@ const MediaItem = ({ media, mediaType }) => {
 
     useEffect(() => {
         setTitle(media.title || media.name || media.mediaTitle);
-        setPosterPath(tmdbConfigs.posterPath(media.poster_path || media.backdrop_path || media.profile_path || media.mediaPoster));
+
+        setPosterPath(tmdbConfigs.posterPath(media.poster_path || media.backdrop_path || media.mediaPoster || media.profile_path));
 
         if (mediaType === tmdbConfigs.mediaType.movie) {
             setReleaseDate(media.release_date && media.release_date.split("-")[0]);
-        } else setReleaseDate(media.first_air_date && media.first_air_date.split("-")[0]);
+        } else {
+            setReleaseDate(media.first_air_date && media.first_air_date.split("-")[0]);
+        }
 
         setRate(media.vote_average || media.mediaRate);
     }, [media, mediaType]);
 
-
     return (
-        <Link to={mediaType !== "people" ? routesGen.mediaDetail(mediaType, media.id || media.mediaid) : routesGen.person(media.id)}>
+        <Link to={mediaType !== "people" ? routesGen.mediaDetail(mediaType, media.mediaId || media.id) : routesGen.person(media.id)}>
             <Box sx={{
                 ...uiConfigs.style.backgroundImage(posterPath),
                 paddingTop: "160%",
-                "&:hover .media-info": {
-                    opacity: 1,
-                    bottom: 0
-                },
+                "&:hover .media-info": { opacity: 1, bottom: 0 },
                 "&:hover .media-back-drop, &:hover .media-play-btn": { opacity: 1 },
                 color: "primary.contrastText"
             }}>
-                {/* movie or tv item*/}
+                {/* movie or tv item */}
                 {mediaType !== "people" && (
                     <>
                         {favoriteUtils.check({ listFavorites, mediaId: media.id }) && (
@@ -64,11 +63,11 @@ const MediaItem = ({ media, mediaType }) => {
                             position: "absolute",
                             top: 0,
                             left: 0,
-                            backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0,0,0,0))"
+                            backgroundImage: "linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))"
                         }} />
                         <Button
-                            className='media-play-btn'
-                            variant='contained'
+                            className="media-play-btn"
+                            variant="contained"
                             startIcon={<PlayArrowIcon />}
                             sx={{
                                 display: { xs: "none", md: "flex" },
@@ -95,14 +94,16 @@ const MediaItem = ({ media, mediaType }) => {
                             }}
                         >
                             <Stack spacing={{ xs: 1, md: 2 }}>
-                                {rate && <CirculateRate value={rate} />}
+                                {rate && <CircularRate value={rate} />}
+
                                 <Typography>{releaseDate}</Typography>
+
                                 <Typography
                                     variant="body1"
                                     fontWeight="700"
                                     sx={{
                                         fontSize: "1rem",
-                                        ...uiConfigs.style.typoLines(1, "left"),
+                                        ...uiConfigs.style.typoLines(1, "left")
                                     }}
                                 >
                                     {title}
@@ -111,7 +112,7 @@ const MediaItem = ({ media, mediaType }) => {
                         </Box>
                     </>
                 )}
-                {/* movie or tv item*/}
+                {/* movie or tv item */}
 
                 {/* people */}
                 {mediaType === "people" && (
@@ -123,7 +124,7 @@ const MediaItem = ({ media, mediaType }) => {
                         padding: "10px",
                         backgroundColor: "rgba(0,0,0,0.6)"
                     }}>
-                        <Typography sx={{ ...uiConfigs.style.typoLines(1, 'left') }}>
+                        <Typography sx={{ ...uiConfigs.style.typoLines(1, "left") }}>
                             {media.name}
                         </Typography>
                     </Box>
